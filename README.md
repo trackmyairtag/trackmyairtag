@@ -1,6 +1,11 @@
 # trackmyairtag
 
-trackmyairtag tracks your Apple AirTag.
+1. Scrapes Find My cache to find the location of your devices & items
+2. Puts the data in Postgres
+3. Displays the data in a web app
+
+The app will not do 1 & 2 unless it detects it is running on a Mac.
+The app will always do 3.
 
 ## See also
 

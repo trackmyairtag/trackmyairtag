@@ -86,7 +86,7 @@ class Database:
                     longitude FLOAT CHECK (longitude > -180 AND longitude < 180),
                     altitude FLOAT,
                     raw JSONB,
-                    UNIQUE (id, latitude, longitude, altitude, timestamp),
+                    UNIQUE (id, latitude, longitude, altitude, timestamp)
                 )
             """
             )
