@@ -35,9 +35,9 @@ async def update_database(app):
             feed = await app['items'].get() + await app['devices'].get()
             for item in feed:
                 try:
-                    print('inserting', item)
                     await app['db'].insert(item)
                 except asyncpg.exceptions.UniqueViolationError:
+                    print('Duplicate', item['id'], item['timestamp'])
                     pass
                 except:
                     traceback.print_exc()
