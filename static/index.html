@@ -41,6 +41,8 @@
 <body>
     <div class="left">
         <h1>TrackMyAirtag</h1>
+        <p style="display:inline">Last updated:</p>
+        <p style="display:inline" id="lastUpdated"></p>
         <div id="airtags">
             <script>
                 fetch('/api/db/latest')
@@ -105,11 +107,15 @@
                     })
                     .then(() => {
                         map.fitBounds(group.getBounds());
+                    })
+                    .then(() => {
+                        document.getElementById('lastUpdated').innerHTML = new Date().toLocaleString();
                     });
-                let timer = setInterval(() => {
-                    updateMarkers();
-                }, 10000);
             };
             updateMarkers();
+            let timer = setInterval(() => {
+                updateMarkers();
+            }, 10000);
+
         </script>
     </div>
