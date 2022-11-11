@@ -3,3 +3,5 @@ asyncpg
 addict
 aiofiles
 aiohttp
+ago
+aiohttp-devtools

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TrackMyAirtag</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+</head>
+<style>
+    body {
+        display: flex;
+        flex-direction: row;
+        height: 94vh;
+        width: 95vw;
+        background-color: #181F2D;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+    }
+
+    .left {
+        flex: 0 0 30%;
+        overflow-y: scroll;
+    }
+
+    .right {
+        flex: 0 0 70%;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    .map {}
+
+</style>
+
+<body>
+    <div class="left">
+        <h1>TrackMyAirtag</h1>
+        <div id="airtags">
+            <script>
+                fetch('/api/db/latest')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        data.forEach(airtag => {
+                            const airtagDiv = document.createElement('div');
+                            airtagDiv.innerHTML = `
+                                <div class="airtag" id="${airtag.id}">
+                                    <h2>${airtag.name}</h2>
+                                    <p>${airtag.address}</p>
+                                </div>
+                            `;
+                            airtagDiv.addEventListener('click', () => {
+                                const marker = markers[airtag.id];
+                                map.flyTo(marker.getLatLng(), 18);
+                                marker.openPopup();
+                            });
+                            document.getElementById('airtags').appendChild(airtagDiv);
+                        });
+                    });
+
+            </script>
+        </div>
+    </div>
+    <div class="right">
+        <div class="map" id="map" style="height: 100%; width: 100%;"></div>
+        <script>
+            const map = L.map('map').setView([41.90, 12.49], 3);
+
+            const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+            let markers = {};
+            fetch("/api/db/latest")
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(airtag => {
+                        const marker = L.circleMarker([airtag.latitude, airtag.longitude], {
+                            radius: 5,
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8,
+                            stroke: true,
+                        }).addTo(map);
+                        marker.bindPopup(`<h1>${airtag.name}</h1><p>Address: ${airtag.address}</p><p>Last seen ${airtag.ago}</p>`);
+                        markers[airtag.id] = marker;
+                    })
+                });
+        </script>
+    </div>
