@@ -28,22 +28,32 @@
         overflow-y: scroll;
     }
 
+    .center {
+        text-align: center;
+    }
+
     .right {
         flex: 0 0 70%;
         margin-top: 1em;
         margin-bottom: 1em;
     }
 
-    .map {}
+    hr {
+        color: #fff;
+
+    }
 
 </style>
 
 <body>
     <div class="left">
-        <h1>TrackMyAirtag</h1>
-        <p style="display:inline">Last updated:</p>
-        <p style="display:inline" id="lastUpdated"></p>
+        <div class="center">
+            <h1>TrackMyAirtag</h1>
+            <p style="display:inline">Last updated:</p>
+            <p style="display:inline" id="lastUpdated"></p>
+        </div>
         <div id="airtags">
+            <hr>
             <script>
                 fetch('/api/db/latest')
                     .then(response => response.json())
@@ -53,8 +63,10 @@
                             const airtagDiv = document.createElement('div');
                             airtagDiv.innerHTML = `
                                 <div class="airtag" id="${airtag.id}">
-                                    <h2>${airtag.name}</h2>
+                                    <h3 class="center">${airtag.name}</h2>
                                     <p>${airtag.address}</p>
+                                    <p>${airtag.ago}</p>
+                                    <hr>
                                 </div>
                             `;
                             airtagDiv.addEventListener('click', () => {
