@@ -7,43 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>TrackMyAirtag</title>
+    <link rel="stylesheet" href="static/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
         integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
 </head>
-<style>
-    body {
-        display: flex;
-        flex-direction: row;
-        height: 94vh;
-        width: 95vw;
-        background-color: #181F2D;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #fff;
-    }
-
-    .left {
-        flex: 0 0 30%;
-        overflow-y: scroll;
-    }
-
-    .center {
-        text-align: center;
-    }
-
-    .right {
-        flex: 0 0 70%;
-        margin-top: 1em;
-        margin-bottom: 1em;
-    }
-
-    hr {
-        color: #fff;
-
-    }
-
-</style>
 
 <body>
     <div class="left">
@@ -55,31 +24,6 @@
         </div>
         <div id="airtags">
             <hr>
-            <script>
-                fetch('/api/db/latest')
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        data.forEach(airtag => {
-                            const airtagDiv = document.createElement('div');
-                            airtagDiv.innerHTML = `
-                                <div class="airtag" id="${airtag.id}">
-                                    <h3 class="center">${airtag.name}</h2>
-                                    <p>${airtag.address}</p>
-                                    <p>${airtag.ago}</p>
-                                    <hr>
-                                </div>
-                            `;
-                            airtagDiv.addEventListener('click', () => {
-                                const marker = markers[airtag.id];
-                                map.flyTo(marker.getLatLng(), 18);
-                                marker.openPopup();
-                            });
-                            document.getElementById('airtags').appendChild(airtagDiv);
-                        });
-                    });
-
-            </script>
         </div>
     </div>
     <div class="right">
@@ -116,17 +60,31 @@
                                     `);
                                 group.addLayer(markers[airtag.id]);
                             }
+
                         });
-                    })
-                    .then(() => {
+                        data.forEach(airtag => {
+                            const airtagDiv = document.createElement('div');
+                            airtagDiv.innerHTML = `
+                                <div class="airtag" id="${airtag.id}">
+                                    <h3 class="center">${airtag.name}</h2>
+                                    <p>${airtag.address}</p>
+                                    <p>${airtag.ago}</p>
+                                    <hr>
+                                </div>
+                            `;
+                            airtagDiv.addEventListener('click', () => {
+                                const marker = markers[airtag.id];
+                                map.flyTo(marker.getLatLng(), 18);
+                                marker.openPopup();
+                            });
+                            document.getElementById('airtags').appendChild(airtagDiv);
+                        });
                         if (document.getElementById('centered').checked) {
                             map.fitBounds(group.getBounds());
                         }
-                    })
-                    .then(() => {
                         document.getElementById('lastUpdated').innerHTML = new Date().toLocaleString();
                     });
-            };
+            }
             updateMarkers();
             let timer = setInterval(() => {
                 updateMarkers();

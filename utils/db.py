@@ -59,7 +59,7 @@ class Database:
                 """,
                 deviceid,
             )
-            rows = [Dict(row) for row in rows]
+            rows = [Dict(dict(row)) for row in rows]
             return self.filter(rows)
 
     async def insert(self, data):

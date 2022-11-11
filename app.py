@@ -11,24 +11,45 @@ from utils.config import DATABASE_DSN, PATH, PORT, REGEX_FILTER
 from utils.db import Database
 from utils.find_my import FindMyDevices, FindMyItems
 
+routes = web.RouteTableDef()
 
+
+@routes.get("/index")
 async def index(request):
     return web.FileResponse("static/index.html")
 
 
+@routes.get("/")
+async def track(request):
+    return web.FileResponse("static/track.html")
+
+
+@routes.get("/api/local/devices")
 async def api_local_get_devices(request):
     return web.json_response(await app["devices"].get())
 
 
+@routes.get("/api/local/items")
 async def api_local_get_items(request):
     return web.json_response(await app["items"].get())
 
 
+@routes.get("/api/db/latest")
 async def api_db_get_latest(request):
     res = await app["db"].get_latest()
     for row in res:
         row["ago"] = human(dt.datetime.fromtimestamp(row["timestamp"]), precision=2)
-        row["timestamp"] = dt.datetime.fromtimestamp(row["timestamp"]).isoformat()
+        row["timestamp_human"] = dt.datetime.fromtimestamp(row["timestamp"]).isoformat()
+    return web.json_response(res)
+
+
+@routes.get("/api/db/trail/{did}")
+async def api_db_get_trail(request):
+    res = await app["db"].specific(request.match_info["did"])
+    for row in res:
+        row["ago"] = human(dt.datetime.fromtimestamp(row["timestamp"]), precision=2)
+        row["timestamp_human"] = dt.datetime.fromtimestamp(row["timestamp"]).isoformat()
+
     return web.json_response(res)
 
 
@@ -60,10 +81,7 @@ async def background_tasks(app):
 
 
 app = web.Application()
-app.add_routes([web.get("/", index)])
-app.add_routes([web.get("/api/local/devices", api_local_get_devices)])
-app.add_routes([web.get("/api/local/items", api_local_get_items)])
-app.add_routes([web.get("/api/db/latest", api_db_get_latest)])
+app.add_routes(routes)
 app.add_routes([web.static("/static", "static")])
 # add background tasks
 app.cleanup_ctx.append(background_tasks)
