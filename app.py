@@ -40,6 +40,7 @@ async def update_database(app):
             for item in feed:
                 try:
                     await app["db"].insert(item)
+                    print(f"Inserted {item['id']} {item['timestamp']}")
                 except asyncpg.exceptions.UniqueViolationError:
                     print("Duplicate", item["id"], item["timestamp"])
                     pass
