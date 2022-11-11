@@ -97,6 +97,7 @@ class Database:
                     raw JSONB,
                     UNIQUE (id, latitude, longitude, altitude, timestamp)
                 )
+                ALTER TABLE log ADD CONSTRAINT log_id_timestamp UNIQUE (id, timestamp);
             """
             )
 
