@@ -7,6 +7,12 @@
 The app will not do 1 & 2 unless it detects it is running on a Mac.
 The app will always do 3.
 
+## Usage
+
+Run `docker compose up`.
+Access the webapp at <http://localhost:8080/>
+(or using a custom port set by environment variable `TMA_PORT`).
+
 ## See also
 
 For great projects relating Find My and AirTag, see:
