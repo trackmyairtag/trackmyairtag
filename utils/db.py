@@ -16,6 +16,7 @@ class Database:
     async def _connect(self):
         if self.conn is None:
             self.conn = await asyncpg.create_pool(self.dsn, command_timeout=60)
+            await self._initdb()
 
     async def get_latest(self):
         await self._connect()
@@ -96,7 +97,7 @@ class Database:
                     altitude FLOAT,
                     raw JSONB,
                     UNIQUE (id, latitude, longitude, altitude, timestamp)
-                )
+                );
                 ALTER TABLE log ADD CONSTRAINT log_id_timestamp UNIQUE (id, timestamp);
             """
             )
