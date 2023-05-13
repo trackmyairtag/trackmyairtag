@@ -9,7 +9,7 @@ The app will always do 3.
 
 ## Usage
 
-Run `docker compose up`.
+Run `docker compose up --build`.
 Access the webapp at <http://localhost:8080/>
 (or using a custom port set by environment variable `TMA_PORT`).
 
