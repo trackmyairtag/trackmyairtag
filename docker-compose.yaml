@@ -5,7 +5,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /Users/user/Library/Caches/com.apple.findmy.fmipcore/:/findmy
+      - /Users/${USER}/Library/Caches/com.apple.findmy.fmipcore/:/findmy
     environment:
       - TMA_PATH=/findmy
       - TMA_DATABASE_DSN=postgresql://postgres:postgres@postgres:5432/findmy
