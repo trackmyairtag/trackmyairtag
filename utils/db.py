@@ -27,6 +27,7 @@ class Database:
                     id,
                     name,
                     address,
+                    image,
                     timestamp,
                     latitude,
                     longitude,
@@ -49,6 +50,7 @@ class Database:
                     id,
                     name,
                     address,
+                    image,
                     timestamp,
                     latitude,
                     longitude,
@@ -69,12 +71,13 @@ class Database:
             await conn.execute(
                 f"""
                 INSERT INTO log
-                    (id, name, address, timestamp, latitude, longitude, altitude, raw)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                    (id, name, address, image, timestamp, latitude, longitude, altitude, raw)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             """,
                 data.id,
                 data.name,
                 data.address,
+                data.image,
                 data.timestamp,
                 data.latitude,
                 data.longitude,
@@ -91,6 +94,7 @@ class Database:
                     id TEXT CHECK (id <> ''),
                     name TEXT CHECK (name <> ''),
                     address TEXT,
+                    image TEXT,
                     timestamp BIGINT CHECK (timestamp > 0),
                     latitude FLOAT CHECK (latitude > -90 AND latitude < 90),
                     longitude FLOAT CHECK (longitude > -180 AND longitude < 180),

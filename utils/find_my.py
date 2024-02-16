@@ -36,11 +36,18 @@ class FindMy:
         version = os.path.getmtime(self.path)
         for i in json.loads(data):
             i = Dict(i)
+            id = i.identifier or i.deviceDiscoveryId
             if i.location is not None:
+                image = i.productType.productInformation.defaultListIcon2x
+                if not image:
+                    model = i.rawDeviceModel.replace('_', ',')
+                    image = f'https://statici.icloud.com/fmipmobile/deviceImages-9.0/{i.deviceClass}/{model}/online-sourcelist.png'
+
                 row = Dict()
-                row.id = i.identifier or i.deviceDiscoveryId
+                row.id = id
                 row.name = i.name
-                row.address = i.address.mapItemFullAddress
+                row.address = i.address.mapItemFullAddress if i.address else None
+                row.image = image
                 row.timestamp = i.location.timeStamp / 1000
                 row.latitude = i.location.latitude
                 row.longitude = i.location.longitude
