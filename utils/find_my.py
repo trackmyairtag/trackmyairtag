@@ -37,12 +37,11 @@ class FindMy:
         for i in json.loads(data):
             i = Dict(i)
             id = i.identifier or i.deviceDiscoveryId
+            # if i.location is not None and id in ["64562A6D-CCFF-4E44-8363-7F370B7FDB95"]:
             if i.location is not None:
                 image = i.productType.productInformation.defaultListIcon2x
                 if not image:
-                    model = i.rawDeviceModel.replace('_', ',')
-                    image = f'https://statici.icloud.com/fmipmobile/deviceImages-9.0/{i.deviceClass}/{model}/online-sourcelist.png'
-
+                    image = f'https://statici.icloud.com/fmipmobile/deviceImages-9.0/{i.deviceClass}/{i.rawDeviceModel}/online-sourcelist.png'
                 row = Dict()
                 row.id = id
                 row.name = i.name
