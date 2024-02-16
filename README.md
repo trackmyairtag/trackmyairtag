@@ -1,4 +1,7 @@
-# trackmyairtag
+# TrackMyAirTags
+
+The goal of this project is to track the location of your Apple devices and AirTags.
+All devices and products that are part of the Find My network can be tracked.
 
 1. Scrapes Find My cache to find the location of your devices & items
 2. Puts the data in Postgres
@@ -11,7 +14,24 @@ The app will always do 3.
 
 Run `docker compose up --build`.
 Access the webapp at <http://localhost:8080/>
-(or using a custom port set by environment variable `TMA_PORT`).
+
+## Environment
+You can set the following environment variables to configure the app.
+
+* `TMA_WHITELIST` is an optional comma separated list of device ids that you want to track.
+  * If you don't set this, the app will track all devices and items in the Find My network.
+* `TMA_PORT` is an optional port the webapp will listen on.
+
+#### Example
+```dotenv
+TMA_WHITELIST=1ed6d9fd-4302-4d73-864e-185931c77eca,41907dc5-8a6f-4fd6-a2ed-5dfe3efa0055
+TMA_PORT=8080
+```
+
+## To Do
+- [ ] Remove duplicated pages for tracking and real time
+- [ ] Use MapKitJS instead of Leaflet
+- [ ] Use a front-end framework such as Svelte or Vue
 
 ## See also
 
