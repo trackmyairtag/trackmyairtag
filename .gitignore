@@ -1,2 +1,5 @@
 db/**
 docker-compose-local.yaml
+
+.vscode
+.idea
