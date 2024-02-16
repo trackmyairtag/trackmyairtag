@@ -48,7 +48,10 @@ function updateMarkers() {
                     airtagDiv.id = airtag.id;
                     airtagDiv.className = "device";
                     airtagDiv.innerHTML = `
-                                <img src="${airtag.image}" alt="device" />
+                                ${!airtag.image
+                                    ? `<span>${airtag.icon}</span>`
+                                    : `<img src="${airtag.image}" alt="device" />`
+                                }
                                 <div>
                                     <h3 class="center" id="name">${airtag.name}</h2>
                                     <p id="address">${airtag.address}</p>

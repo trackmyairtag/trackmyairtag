@@ -33,19 +33,23 @@ class FindMy:
 
     def _parse_data(self, data):
         ret = []
-        version = os.path.getmtime(self.path)
         for i in json.loads(data):
             i = Dict(i)
             id = i.identifier or i.deviceDiscoveryId
             if i.location is not None and isIdWhitelisted(id):
                 image = i.productType.productInformation.defaultListIcon2x
-                if not image:
+
+                if i.deviceClass and i.rawDeviceModel:
                     image = f'https://statici.icloud.com/fmipmobile/deviceImages-9.0/{i.deviceClass}/{i.rawDeviceModel}/online-sourcelist.png'
+                if not image:
+                    image = None
+
                 row = Dict()
                 row.id = id
                 row.name = i.name
                 row.address = i.address.mapItemFullAddress if i.address else None
                 row.image = image
+                row.icon = i.role.emoji if i.role else None
                 row.timestamp = i.location.timeStamp / 1000
                 row.latitude = i.location.latitude
                 row.longitude = i.location.longitude
