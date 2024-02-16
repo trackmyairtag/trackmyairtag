@@ -1,17 +1,12 @@
 import json
-import re
-
 import asyncpg
 from addict import Dict
-
+from utils.whitelist import isIdWhitelisted
 
 class Database:
-    def __init__(self, dsn, regex_filter):
+    def __init__(self, dsn):
         self.dsn = dsn
         self.conn = None
-        self.regex_filter = (
-            re.compile(regex_filter) if regex_filter is not None else None
-        )
 
     async def _connect(self):
         if self.conn is None:
@@ -107,6 +102,4 @@ class Database:
             )
 
     def filter(self, data):
-        if self.regex_filter is None:
-            return data
-        return [i for i in data if re.match(self.regex_filter, i.name)]
+        return [i for i in data if isIdWhitelisted(i.id)]

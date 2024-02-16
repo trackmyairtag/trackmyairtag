@@ -7,7 +7,7 @@ import itertools
 from addict import Dict
 import aiofiles, aiofiles.os
 import asyncio
-
+from utils.whitelist import isIdWhitelisted
 
 class FindMy:
     def __init__(self, path):
@@ -37,8 +37,7 @@ class FindMy:
         for i in json.loads(data):
             i = Dict(i)
             id = i.identifier or i.deviceDiscoveryId
-            # if i.location is not None and id in ["64562A6D-CCFF-4E44-8363-7F370B7FDB95"]:
-            if i.location is not None:
+            if i.location is not None and isIdWhitelisted(id):
                 image = i.productType.productInformation.defaultListIcon2x
                 if not image:
                     image = f'https://statici.icloud.com/fmipmobile/deviceImages-9.0/{i.deviceClass}/{i.rawDeviceModel}/online-sourcelist.png'

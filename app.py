@@ -7,7 +7,7 @@ import asyncpg
 from ago import human
 from aiohttp import web
 
-from utils.config import DATABASE_DSN, PATH, PORT, REGEX_FILTER
+from utils.config import DATABASE_DSN, PATH, PORT
 from utils.db import Database
 from utils.find_my import FindMyDevices, FindMyItems
 
@@ -86,7 +86,7 @@ app.add_routes([web.static("/static", "static")])
 # add background tasks
 app.cleanup_ctx.append(background_tasks)
 
-app["db"] = Database(DATABASE_DSN, REGEX_FILTER)
+app["db"] = Database(DATABASE_DSN)
 app["items"] = FindMyItems(path=PATH)
 app["devices"] = FindMyDevices(path=PATH)
 

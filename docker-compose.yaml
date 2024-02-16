@@ -9,6 +9,8 @@ services:
     environment:
       - TMA_PATH=/findmy
       - TMA_DATABASE_DSN=postgresql://postgres:postgres@postgres:5432/findmy
+      - TMA_WHITELIST=${TMA_WHITELIST}
+
   postgres:
     image: postgres:15-alpine
     environment:
