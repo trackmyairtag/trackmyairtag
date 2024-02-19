@@ -2,21 +2,16 @@ const map = L.map('map', { zoomControl: false }).setView([41.90, 12.49], 3, {
     zoomControl: false
 });
 
-const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-}).addTo(map);
+const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 let markers = {};
 let group = L.featureGroup();
 let airtagsDiv = document.getElementById("airtags");
-let polyline = L.polyline([], {
-    color: 'red'
-}).addTo(map);
+const trails = [];
 
 function updateMarkers() {
     return fetch('/api/db/latest')
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             data.forEach(airtag => {
                 const marker = markers[airtag.id];
                 if (marker) {
@@ -74,21 +69,37 @@ function updateMarkers() {
 function createAirtagTrail() {
     allAirTagLocations = [];
     promises = [];
-    for (const airtagDiv of document.getElementsByClassName('airtag')) {
-        const id = airtagDiv.id;
-        console.log(id);
-        const trailCheckbox = airtagDiv.querySelector('#trail');
-        if (trailCheckbox.checked) {
-            promises.push(fetch(`/api/db/trail/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(airtag => {
-                        allAirTagLocations.push(airtag);
-                    });
-                }));
-        }
+
+    for (const device of document.getElementsByClassName('device')) {
+        promises.push(fetch(`/api/db/trail/${device.id}`)
+            .then(response => response.json())
+            .then(data => {
+                const locations = data.map(airtag => [airtag.latitude, airtag.longitude]);
+
+                allAirTagLocations.push(locations)
+            }));
     }
+
+    Promise.all(promises).then(() => {
+        // Removing all trails before adding updated ones
+        trails.forEach(trail => {
+            map.removeLayer(trail);
+        });
+
+        allAirTagLocations.forEach(locations => {
+            const polyline = L.polyline([], {
+                color: '#C46BAE'
+            });
+
+            const sortedLocations = locations.sort((a, b) => a.timestamp - b.timestamp);
+
+            polyline.setLatLngs(sortedLocations);
+            polyline.addTo(map);
+            trails.push(polyline);
+        });
+    });
 }
+
 // When the page loads, update the markers
 document.addEventListener('DOMContentLoaded', () => {
     Promise.all([updateMarkers()])
