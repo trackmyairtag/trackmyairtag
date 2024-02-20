@@ -83,10 +83,10 @@ async function updateMarkers() {
               map.removeLayer(markers[airtag.id]);
             }
 
-            airtagDiv.classList.toggle('hidden');
+            createdDeviceContainer.classList.toggle('hidden');
           });
 
-          airtagDiv.addEventListener('click', () => {
+          createdDeviceContainer.addEventListener('click', () => {
             const marker = markers[airtag.id];
 
             map.flyTo(marker.getLatLng(), 12, { duration: 0.25 });
