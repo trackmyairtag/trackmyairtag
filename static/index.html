@@ -7,88 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>TrackMyAirtag</title>
+    <link rel="stylesheet" href="static/reset.css">
     <link rel="stylesheet" href="static/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
         integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
 </head>
-
 <body>
-    <div class="left">
-        <div class="center">
-            <h1>TrackMyAirtag</h1>
-            <p style="display:inline">Last updated:</p>
-            <p style="display:inline" id="lastUpdated"></p>
-            <input type="checkbox" id="centered" name="centered" value="1">
-        </div>
-        <div id="airtags">
-            <hr>
-        </div>
+    <div id="devices">
+        <h1>Tous mes appareils</h1>
+        <ul id="airtags"></ul>
     </div>
-    <div class="right">
-        <div class="map" id="map" style="height: 100%; width: 100%;"></div>
-        <script>
-            const map = L.map('map').setView([41.90, 12.49], 3);
-
-            const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            let markers = {};
-            let group = L.featureGroup();
-            function updateMarkers() {
-                fetch('/api/db/latest')
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        data.forEach(airtag => {
-                            const marker = markers[airtag.id];
-                            if (marker) {
-                                marker.setLatLng([airtag.latitude, airtag.longitude]);
-                                marker.setPopupContent(`
-                                    <h2>${airtag.name}</h2>
-                                    <p>${airtag.address}</p>
-                                    <p>${airtag.ago}</p>
-                                `);
-                            } else {
-                                markers[airtag.id] = L.marker([airtag.latitude, airtag.longitude]).addTo(map)
-                                    .bindPopup(`
-                                        <h2>${airtag.name}</h2>
-                                        <p>${airtag.address}</p>
-                                        <p>${airtag.ago}</p>
-                                    `);
-                                group.addLayer(markers[airtag.id]);
-                            }
-
-                        });
-                        data.forEach(airtag => {
-                            const airtagDiv = document.createElement('div');
-                            airtagDiv.innerHTML = `
-                                <div class="airtag" id="${airtag.id}">
-                                    <h3 class="center">${airtag.name}</h2>
-                                    <p>${airtag.address}</p>
-                                    <p>${airtag.ago}</p>
-                                    <hr>
-                                </div>
-                            `;
-                            airtagDiv.addEventListener('click', () => {
-                                const marker = markers[airtag.id];
-                                map.flyTo(marker.getLatLng(), 18);
-                                marker.openPopup();
-                            });
-                            document.getElementById('airtags').appendChild(airtagDiv);
-                        });
-                        if (document.getElementById('centered').checked) {
-                            map.fitBounds(group.getBounds());
-                        }
-                        document.getElementById('lastUpdated').innerHTML = new Date().toLocaleString();
-                    });
-            }
-            updateMarkers();
-            let timer = setInterval(() => {
-                updateMarkers();
-            }, 10000);
-
-        </script>
-    </div>
+    <div class="map" id="map" style="height: 100%; width: 100%;"></div>
+    <script src="static/track.js" lang="text/javascript"></script>
+</body>
+</html>

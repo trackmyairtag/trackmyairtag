@@ -14,14 +14,9 @@ from utils.find_my import FindMyDevices, FindMyItems
 routes = web.RouteTableDef()
 
 
-@routes.get("/index")
-async def index(request):
-    return web.FileResponse("static/index.html")
-
-
 @routes.get("/")
 async def track(request):
-    return web.FileResponse("static/track.html")
+    return web.FileResponse("static/index.html")
 
 
 @routes.get("/api/local/devices")
