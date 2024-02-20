@@ -66,22 +66,7 @@ async function updateMarkers() {
 
           createdDeviceContainer.addEventListener('contextmenu', e => {
             e.preventDefault();
-
-            const trail = trails.get(item.id);
-            if (!trail)
-              return;
-
-            if (hiddenDevices.has(item.id)) {
-              hiddenDevices.delete(item.id);
-              map.addLayer(trail);
-              map.addLayer(markers[item.id]);
-            } else {
-              hiddenDevices.add(item.id);
-              map.removeLayer(trail);
-              map.removeLayer(markers[item.id]);
-            }
-
-            createdDeviceContainer.classList.toggle('hidden');
+            toggleDeviceVisibility(item.id);
           });
 
           createdDeviceContainer.addEventListener('click', () => {
@@ -93,6 +78,30 @@ async function updateMarkers() {
         }
       });
     });
+}
+
+function toggleAllDevicesVisibility() {
+  Object.keys(markers).forEach(id => toggleDeviceVisibility(id));
+}
+
+function toggleDeviceVisibility(id) {
+  const listItem = document.getElementById(id);
+  const trail = trails.get(id);
+
+  if (!trail || !listItem)
+    return;
+
+  listItem.classList.toggle('hidden');
+
+  if (hiddenDevices.has(id)) {
+    hiddenDevices.delete(id);
+    map.addLayer(trail);
+    map.addLayer(markers[id]);
+  } else {
+    hiddenDevices.add(id);
+    map.removeLayer(trail);
+    map.removeLayer(markers[id]);
+  }
 }
 
 function createItemsTrail() {
@@ -131,13 +140,13 @@ function createItemsTrail() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const updateAll = () => {
-    console.info('Updating all devices...');
-    console.info({ hiddenDevices });
-
-    updateMarkers().then(createItemsTrail);
-  };
+  const updateAll = () => updateMarkers().then(createItemsTrail);
 
   setInterval(updateAll, 10000);
   updateAll();
+
+  const title = document.querySelector('#devices-list h1');
+  if (!title)
+    return;
+  title.addEventListener('click', toggleAllDevicesVisibility);
 });
