@@ -13,7 +13,7 @@ body {
     line-height: 1rem;
 }
 
-#devices {
+#devices-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -32,23 +32,28 @@ body {
     cursor: pointer;
 }
 
-#devices h1 {
+#devices-list h1 {
     font-size: 2rem;
     font-weight: 600;
     padding: .25rem;
     line-height: normal;
 }
 
-#devices .device {
+#devices-list .device {
     display: flex;
     flex-direction: row;
     gap: .5rem;
     border-radius: .65rem;
     align-items: center;
     padding: 0 1rem;
+    transition: .2s ease-in-out opacity;
 }
 
-#devices .device img, #devices .device span, .device-marker span, .device-marker img {
+#devices-list .device.hidden {
+    opacity: 0.5;
+}
+
+#devices-list .device img, #devices-list .device span, .device-marker span, .device-marker img {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -62,7 +67,7 @@ body {
     font-size: 1rem;
 }
 
-#devices .device div {
+#devices-list .device div {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -71,12 +76,12 @@ body {
     gap: 0.25rem;
 }
 
-#devices .device:hover {
+#devices-list .device:hover {
     background-color: #eaeaea;
 }
 
-#devices .device h3 {font-size: 1rem;}
-#devices .device p {
+#devices-list .device h3 {font-size: 1rem;}
+#devices-list .device p {
     font-size: .85rem;
     font-weight: 300;
     color: gray;
