@@ -47,7 +47,7 @@ body {
     padding: 0 1rem;
 }
 
-#devices .device img, #devices .device span {
+#devices .device img, #devices .device span, .device-marker span, .device-marker img {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,6 +58,7 @@ body {
     background: #fff;
     border-radius: 50%;
     box-shadow: 0 2px 15px rgba(0, 0, 0, .1);
+    font-size: 1rem;
 }
 
 #devices .device div {

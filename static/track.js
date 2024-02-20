@@ -22,12 +22,23 @@ function updateMarkers() {
                                 <p>${airtag.ago}</p>
                             `);
                 } else {
-                    markers[airtag.id] = L.marker([airtag.latitude, airtag.longitude]).addTo(map)
-                        .bindPopup(`
-                                    <h2>${airtag.name}</h2>
-                                    <p>${airtag.address}</p>
-                                    <p>${airtag.ago}</p>
-                                `);
+                    markers[airtag.id] = L.marker([airtag.latitude, airtag.longitude], {
+                        icon: L.divIcon({
+                            className: 'device-marker',
+                            html: !airtag.image
+                                ? `<span>${airtag.icon}</span>`
+                                : `<img src="${airtag.image}" alt="device" />`,
+                            popupAnchor: [0, -20],
+                            iconSize: [40, 40]
+                        })
+                    });
+
+                    markers[airtag.id].addTo(map);
+                    markers[airtag.id].bindPopup(`
+                        <h2>${airtag.name}</h2>
+                        <p>${airtag.address}</p>
+                        <p>${airtag.ago}</p>
+                    `);
                     group.addLayer(markers[airtag.id]);
                 }
                 // Create an element in airtagsDiv
@@ -88,7 +99,7 @@ function createAirtagTrail() {
 
         allAirTagLocations.forEach(locations => {
             const polyline = L.polyline([], {
-                color: '#C46BAE'
+                color: 'red'
             });
 
             const sortedLocations = locations.sort((a, b) => a.timestamp - b.timestamp);
