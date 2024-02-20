@@ -12,8 +12,11 @@ The app will always do 3.
 
 ## Usage
 
-Run `docker compose up --build`.
+Run `docker compose up --build`.  
 Access the webapp at <http://localhost:8080/>
+
+> [!NOTE]
+> You can right click every device on the list to hide/show it on the map.
 
 ## Environment
 You can set the following environment variables to configure the app.
