@@ -1,12 +1,9 @@
-const map = L.map('map', { zoomControl: false }).setView([41.90, 12.49], 3, {
-    zoomControl: false
-});
-
+const map = L.map('map', { zoomControl: false }).setView([41.90, 12.49], 3, { zoomControl: false });
 const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-let markers = {};
-let group = L.featureGroup();
-let airtagsDiv = document.getElementById("airtags");
-const trails = [];
+const trails = new Map();
+const hiddenDevices = new Set();
+const markers = {};
+const devicesContainer = document.getElementById("devices");
 
 function updateMarkers() {
     return fetch('/api/db/latest')
@@ -17,10 +14,10 @@ function updateMarkers() {
                 if (marker) {
                     marker.setLatLng([airtag.latitude, airtag.longitude]);
                     marker.setPopupContent(`
-                                <h2>${airtag.name}</h2>
-                                <p>${airtag.address}</p>
-                                <p>${airtag.ago}</p>
-                            `);
+                        <h2>${airtag.name}</h2>
+                        <p>${airtag.address}</p>
+                        <p>${airtag.ago}</p>
+                    `);
                 } else {
                     markers[airtag.id] = L.marker([airtag.latitude, airtag.longitude], {
                         icon: L.divIcon({
@@ -39,9 +36,11 @@ function updateMarkers() {
                         <p>${airtag.address}</p>
                         <p>${airtag.ago}</p>
                     `);
-                    group.addLayer(markers[airtag.id]);
+
+                    if (!hiddenDevices.has(airtag.id))
+                        map.addLayer(markers[airtag.id]);
                 }
-                // Create an element in airtagsDiv
+                // Create an element in devicesContainer
                 // Check if it exists, if not create it
 
                 let does_exist = document.getElementById(airtag.id);
@@ -54,17 +53,40 @@ function updateMarkers() {
                     airtagDiv.id = airtag.id;
                     airtagDiv.className = "device";
                     airtagDiv.innerHTML = `
-                                ${!airtag.image
-                                    ? `<span>${airtag.icon}</span>`
-                                    : `<img src="${airtag.image}" alt="device" />`
-                                }
-                                <div>
-                                    <h3 class="center" id="name">${airtag.name}</h2>
-                                    <p id="address">${airtag.address}</p>
-                                    <p id="ago">${airtag.ago}</p>
-                                </div>
-                            `;
-                    airtagsDiv.appendChild(airtagDiv);
+                        ${!airtag.image
+                            ? `<span>${airtag.icon}</span>`
+                            : `<img src="${airtag.image}" alt="device" />`
+                        }
+                        <div>
+                            <h3 class="center" id="name">${airtag.name}</h2>
+                            <p id="address">${airtag.address}</p>
+                            <p id="ago">${airtag.ago}</p>
+                        </div>
+                    `;
+                    devicesContainer.appendChild(airtagDiv);
+
+                    airtagDiv.addEventListener('contextmenu', e => {
+                        e.preventDefault();
+
+                        const trail = trails.get(airtag.id);
+                        if (!trail)
+                            return;
+
+                        if (hiddenDevices.has(airtag.id)) {
+                            hiddenDevices.delete(airtag.id);
+                            map.addLayer(trail);
+                            map.addLayer(markers[airtag.id]);
+
+                        } else {
+                            hiddenDevices.add(airtag.id);
+                            map.removeLayer(trail);
+                            map.removeLayer(markers[airtag.id]);
+                        }
+
+                        airtagDiv.classList.toggle('hidden');
+                        
+                    });
+
                     airtagDiv.addEventListener('click', () => {
                         const marker = markers[airtag.id];
                         map.flyTo(marker.getLatLng(), 12, {
@@ -78,8 +100,8 @@ function updateMarkers() {
 }
 
 function createAirtagTrail() {
-    allAirTagLocations = [];
-    promises = [];
+    const allAirTagLocations = new Map();
+    const promises = [];
 
     for (const device of document.getElementsByClassName('device')) {
         promises.push(fetch(`/api/db/trail/${device.id}`)
@@ -87,40 +109,40 @@ function createAirtagTrail() {
             .then(data => {
                 const locations = data.map(airtag => [airtag.latitude, airtag.longitude]);
 
-                allAirTagLocations.push(locations)
+                allAirTagLocations.set(device.id, locations);
             }));
     }
 
     Promise.all(promises).then(() => {
         // Removing all trails before adding updated ones
-        trails.forEach(trail => {
+        trails.forEach((trail, _) => {
             map.removeLayer(trail);
         });
 
-        allAirTagLocations.forEach(locations => {
+        allAirTagLocations.forEach((locations, id) => {
+            const sortedLocations = locations.sort((a, b) => a.timestamp - b.timestamp);
             const polyline = L.polyline([], {
                 color: 'red'
             });
 
-            const sortedLocations = locations.sort((a, b) => a.timestamp - b.timestamp);
-
             polyline.setLatLngs(sortedLocations);
-            polyline.addTo(map);
-            trails.push(polyline);
+            
+            if (!hiddenDevices.has(id))
+                polyline.addTo(map);
+
+            trails.set(id, polyline);
         });
     });
 }
 
-// When the page loads, update the markers
 document.addEventListener('DOMContentLoaded', () => {
-    Promise.all([updateMarkers()])
-        .then(() => {
-            createAirtagTrail();
-        });
-    setInterval(function () {
-        Promise.all([updateMarkers()])
-            .then(() => {
-                createAirtagTrail();
-            });
-    }, 10000);
+    const updateAll = () => {
+        console.info('Updating all devices...');
+        console.info({ hiddenDevices });
+
+        updateMarkers().then(createAirtagTrail);
+    };
+
+    setInterval(updateAll, 10000);
+    updateAll();
 });
