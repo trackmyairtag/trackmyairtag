@@ -31,17 +31,27 @@ body {
     cursor: pointer;
 }
 
-#devices-list h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    padding: .25rem;
-    line-height: normal;
+#devices-list header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     padding: 1rem 1rem .5rem;
     position: sticky;
     top: 0;
     background-color: rgba(255, 255, 255, .8);
     backdrop-filter: blur(20px);
     z-index: 1;
+}
+
+#devices-list header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: normal;
+}
+
+#devices-list header #toggle-visibility {
+    object-fit: contain;
+    width: 30px;
 }
 
 #devices-list #devices {

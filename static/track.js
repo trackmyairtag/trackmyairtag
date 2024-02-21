@@ -4,6 +4,7 @@ const trails = new Map();
 const hiddenDevices = new Set();
 const markers = {};
 const devicesContainer = document.getElementById("devices");
+let visibilityState = true;
 
 async function updateMarkers() {
   return fetch('/api/db/latest')
@@ -81,26 +82,30 @@ async function updateMarkers() {
 }
 
 function toggleAllDevicesVisibility() {
-  Object.keys(markers).forEach(id => toggleDeviceVisibility(id));
+  visibilityState = !visibilityState;
+
+  Object.keys(markers).forEach(id => {
+    toggleDeviceVisibility(id, visibilityState)
+  });
 }
 
-function toggleDeviceVisibility(id) {
+function toggleDeviceVisibility(id, state = hiddenDevices.has(id)) {
   const listItem = document.getElementById(id);
   const trail = trails.get(id);
 
   if (!trail || !listItem)
     return;
 
-  listItem.classList.toggle('hidden');
-
-  if (hiddenDevices.has(id)) {
+  if (state) {
     hiddenDevices.delete(id);
     map.addLayer(trail);
     map.addLayer(markers[id]);
+    listItem.classList.remove('hidden');
   } else {
     hiddenDevices.add(id);
     map.removeLayer(trail);
     map.removeLayer(markers[id]);
+    listItem.classList.add('hidden');
   }
 }
 
@@ -145,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateAll, 10000);
   updateAll();
 
-  const title = document.querySelector('#devices-list h1');
-  if (!title)
+  const toggleVisibility = document.querySelector('#toggle-visibility');
+  if (!toggleVisibility)
     return;
-  title.addEventListener('click', toggleAllDevicesVisibility);
+    toggleVisibility.addEventListener('click', toggleAllDevicesVisibility);
 });
