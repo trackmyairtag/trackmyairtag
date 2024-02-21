@@ -73,6 +73,7 @@ async function updateMarkers() {
           createdDeviceContainer.addEventListener('click', () => {
             const marker = markers[item.id];
 
+            toggleDeviceVisibility(item.id, true);
             map.flyTo(marker.getLatLng(), 12, { duration: 0.25 });
             marker.openPopup();
           });
