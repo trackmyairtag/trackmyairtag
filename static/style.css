@@ -4,13 +4,32 @@
 
 body {
     display: flex;
-    font-family: system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Droid Sans,Helvetica Neue;
-    color: #000;
-    width: 100svw;
-    height: 100svh;
-    padding: 0;
-    margin: 0;
-    line-height: 1rem;
+    flex-direction: row;
+    height: 94vh;
+    width: 95vw;
+    background-color: #181F2D;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+}
+
+.left {
+    flex: 0 0 30%;
+    overflow-y: scroll;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    flex: 0 0 70%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+hr {
+    color: #fff;
+
 }
 
 #devices-list {
