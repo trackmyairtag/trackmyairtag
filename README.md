@@ -14,7 +14,6 @@ The app will always do 3.
 ## Usage
 
 Run `docker compose up --build`.
-Run the app locally on your Mac. (how? it is a mystery)
 Access the webapp at <http://localhost:8080/>
 
 > [!NOTE]
