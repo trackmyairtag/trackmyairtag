@@ -22,13 +22,13 @@ Access the webapp at <http://localhost:8080/>
 ## Environment
 You can set the following environment variables to configure the app.
 
-* `TMA_WHITELIST` is an optional comma separated list of device ids that you want to track.
+* `TMA_ALLOWED_IDS` is an optional comma separated list of device ids that you want to track.
   * If you don't set this, the app will track all devices and items in the Find My network.
 * `TMA_PORT` is an optional port the webapp will listen on.
 
 #### Example
 ```dotenv
-TMA_WHITELIST=1ed6d9fd-4302-4d73-864e-185931c77eca,41907dc5-8a6f-4fd6-a2ed-5dfe3efa0055
+TMA_ALLOWED_IDS=1ed6d9fd-4302-4d73-864e-185931c77eca,41907dc5-8a6f-4fd6-a2ed-5dfe3efa0055
 TMA_PORT=8080
 ```
 

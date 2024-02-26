@@ -1,7 +1,10 @@
 import json
+
 import asyncpg
 from addict import Dict
-from utils.whitelist import isIdWhitelisted
+
+from utils.config import is_id_allowed
+
 
 class Database:
     def __init__(self, dsn):
@@ -106,4 +109,4 @@ class Database:
             )
 
     def filter(self, data):
-        return [i for i in data if isIdWhitelisted(i.id)]
+        return [i for i in data if is_id_allowed(i.id)]

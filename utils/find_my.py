@@ -1,13 +1,17 @@
 # Read location from Find My app
 # HOME / /Library/Caches/com.apple.findmy.fmipcore/Items.data
 
-import os
-import json
-import itertools
-from addict import Dict
-import aiofiles, aiofiles.os
 import asyncio
-from utils.whitelist import isIdWhitelisted
+import itertools
+import json
+import os
+
+import aiofiles
+import aiofiles.os
+from addict import Dict
+
+from utils.config import is_id_allowed
+
 
 class FindMy:
     def __init__(self, path):
@@ -36,7 +40,7 @@ class FindMy:
         for i in json.loads(data):
             i = Dict(i)
             id = i.identifier or i.deviceDiscoveryId
-            if i.location is not None and isIdWhitelisted(id):
+            if i.location is not None and is_id_allowed(id):
                 image = i.productType.productInformation.defaultListIcon2x
 
                 if i.deviceClass and i.rawDeviceModel:
